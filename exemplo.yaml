@@ -29,4 +29,5 @@ pesos: [
 service_times: [0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
 
 # Capacidades dos veículos
+# Por hipotese todos devem ter a mesma capacidade
 veiculos: [100, 100, 100]
