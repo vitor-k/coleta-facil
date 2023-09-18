@@ -1,0 +1,41 @@
+name: Valida
+
+on: [push]
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup
+      run: |
+        pip install numpy pyyaml
+    - name: Test
+      run: |
+        python test.py
+  estilo-de-codigo:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup
+      run: |
+        pip install pycodestyle
+    - name: Code Style
+      run: |
+        pycodestyle .
+  gera-documentacao:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup
+      run: |
+        pip install numpy pyyaml
+        pip install pdoc3
+    - name: Documentation
+      run: |
+        pdoc --html .
+    - name: Upload Documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: doc
+        path: html/
