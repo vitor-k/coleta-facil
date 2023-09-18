@@ -1,12 +1,14 @@
 import numpy as np
 import yaml
 
+
 class Vertex:
     """
     Vértices do grafo, podendo ser lixeiras ou despache/depósito.
     Por simplificação há um único despache/depósito, representado por id=0.
     """
     _id = 0
+
     def __init__(self, id: int = None, capacidade: float = 0) -> None:
         if id is not None:
             self.id = id
@@ -24,10 +26,11 @@ class Vertex:
         return f"{self.id}: {self.nivel} / {self.capacidade}"
 
     def __str__(self) -> str:
-        if(self.id != 0):
+        if self.id != 0:
             return f"Lixeira {self.id}: Nível={self.nivel}, Capacidade={self.capacidade}"
         else:
             return "Depósito"
+
 
 class Graph:
     """
@@ -65,7 +68,7 @@ class Graph:
         Returns:
             None
         """
-        if self.vertices[self.i_preenchido] == None:
+        if self.vertices[self.i_preenchido] is None:
             self.vertices[self.i_preenchido] = vertice
             self.i_preenchido += 1
         pass
@@ -73,4 +76,3 @@ class Graph:
     def populaMatriz(self, distancias: dict):
         pass
 
-    
