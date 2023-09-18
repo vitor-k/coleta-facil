@@ -27,7 +27,8 @@ class Vertex:
 
     def __str__(self) -> str:
         if self.id != 0:
-            return f"Lixeira {self.id}: Nível={self.nivel}, Capacidade={self.capacidade}"
+            return f"Lixeira {self.id}: Nível={self.nivel}, \
+                     Capacidade={self.capacidade}"
         else:
             return "Depósito"
 
@@ -44,7 +45,8 @@ class Graph:
                 print(dados)
                 capacidades = dados["capacidades"]
                 self.num_vertices = len(capacidades)
-                self.vertices = list([Vertex(capacidade=c) for c in capacidades])
+                self.vertices = list([Vertex(capacidade=c)
+                                     for c in capacidades])
                 if self.vertices[0].id != 0:
                     self.vertices[0].id = 0
                 self.matriz_adjacencia = np.array(dados["pesos"])
@@ -52,7 +54,7 @@ class Graph:
             return
             pass
 
-        self.vertices = num_vertices*[None]
+        self.vertices = num_vertices * [None]
         self.i_preenchido = 0
 
         self.matriz_adjacencia = np.ndarray((num_vertices, num_vertices))
@@ -75,4 +77,3 @@ class Graph:
 
     def populaMatriz(self, distancias: dict):
         pass
-

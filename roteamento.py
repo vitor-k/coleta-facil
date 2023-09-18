@@ -3,7 +3,8 @@ from graph import *
 import numpy as np
 
 
-def nearestNeighbour(grafo: object, nos_relevantes: list, capacidade_veiculo: int):
+def nearestNeighbour(grafo: object, nos_relevantes: list,
+                     capacidade: int):
     rota = []
     parada = False
     no_atual = 0
@@ -15,12 +16,13 @@ def nearestNeighbour(grafo: object, nos_relevantes: list, capacidade_veiculo: in
         for i in range(len(distancias)):
             if not nos_relevantes[i]:
                 continue
-            if grafo.vertices[i] not in rota and distancias[i] < menor_distancia:
+            if grafo.vertices[i] not in rota \
+                    and distancias[i] < menor_distancia:
                 mais_proximo = i
                 menor_distancia = distancias[i]
         if mais_proximo is None:
             parada = True
-        elif nivel_previsto + grafo.vertices[mais_proximo].nivel < capacidade_veiculo:
+        elif nivel_previsto + grafo.vertices[mais_proximo].nivel < capacidade:
             rota.append(grafo.vertices[mais_proximo])
             nivel_previsto += grafo.vertices[mais_proximo].nivel
             no_atual = mais_proximo
@@ -29,7 +31,8 @@ def nearestNeighbour(grafo: object, nos_relevantes: list, capacidade_veiculo: in
     return rota
 
 
-def savingsAlgorithm(grafo: object, nos_relevantes: list, capacidade_veiculo: int):
+def savingsAlgorithm(grafo: object, nos_relevantes: list,
+                     capacidade_veiculo: int):
     rotas = []
     distancia = grafo.matriz_adjacencia
 
@@ -49,15 +52,16 @@ def savingsAlgorithm(grafo: object, nos_relevantes: list, capacidade_veiculo: in
                 if i == j:
                     continue
                 # verificar se a rota e possivel
-                nivel_previsto = sum([grafo.vertices[v].nivel for v in rotas[i]+rotas[j]])
+                nivel_previsto = sum(
+                    [grafo.vertices[v].nivel for v in rotas[i] + rotas[j]])
                 if nivel_previsto >= capacidade_veiculo:
                     continue
 
                 primeira_rota_fim = rotas[i][-1]
                 segunda_rota_inicio = rotas[j][0]
                 savings[(i, j)] = distancia[0, primeira_rota_fim] \
-                                  + distancia[segunda_rota_inicio, 0] \
-                                  - distancia[primeira_rota_fim, segunda_rota_inicio]
+                    + distancia[segunda_rota_inicio, 0] \
+                    - distancia[primeira_rota_fim, segunda_rota_inicio]
 
         if not savings:
             break
