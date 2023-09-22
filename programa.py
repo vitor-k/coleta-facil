@@ -1,10 +1,11 @@
 import graph
 import roteamento
 import random
+import argparse
 
 
-def main():
-    grafo = graph.Graph(filename="exemplo.yaml")
+def main(filepath):
+    grafo = graph.Graph(filename=filepath)
     for v in grafo.vertices:
         v.nivel = round(random.random() * v.capacidade)
     print(grafo.vertices)
@@ -20,8 +21,13 @@ def main():
 
     print("As rotas pelo savings: ", roteamento.savingsAlgorithm(
         grafo, nos_relevantes, 100))
-    pass
+    return
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        prog="Coleta Facil",
+        description="Realiza o roteamento a partir de heurísticas")
+    parser.add_argument("filepath", nargs='?', default="exemplo.yaml")
+    args = parser.parse_args()
+    main(args.filepath)
