@@ -7,20 +7,25 @@ import argparse
 def main(filepath):
     grafo = graph.Graph(filename=filepath)
     for v in grafo.vertices:
-        v.nivel = round(random.random() * v.capacidade)
+        v.nivel = round(max(0.7, random.random()) * v.capacidade)
     print(grafo.vertices)
-    nos_relevantes = [(v.id != 0) and (v.nivel / v.capacidade > 0.6)
-                      for v in grafo.vertices]
+    nos_relevantes = set([v.id for v in grafo.vertices
+                          if (v.id != 0) and 
+                          (v.nivel / v.capacidade > 0.6)])
 
-    print("Nos relevantes: ", list(
-        [grafo.vertices[i] for i in range(len(nos_relevantes))
-         if nos_relevantes[i]]))
+    print("Nos relevantes: ", list([grafo.vertices[i] for i in nos_relevantes]))
+    
+    print("k-medoids:", roteamento.kMedoidsClustering(grafo, nos_relevantes, 100))
 
     print("Uma rota do nearest neighbour: ",
           roteamento.nearestNeighbour(grafo, nos_relevantes, 100))
 
     print("As rotas pelo savings: ", roteamento.savingsAlgorithm(
         grafo, nos_relevantes, 100))
+    
+    print("As rotas pelo cluster first, route second: ", roteamento.clusterFirstRouteSecond(
+        grafo, nos_relevantes, 100))
+
     return
 
 

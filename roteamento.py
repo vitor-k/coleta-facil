@@ -1,9 +1,57 @@
 
+import random
+from math import ceil
 from graph import *
 import numpy as np
 
 
-def nearestNeighbour(grafo: object, nos_relevantes: list,
+def custoVerticeCluster(grafo: Graph, cluster: set[int], v: int):
+    total = 0
+    for e in cluster-set([v]):
+        total += grafo.distancia_id(v,e)
+    return total
+
+
+def custoCluster(grafo: Graph, cluster: set[int]):
+    total = 0
+    for v in cluster:
+        total += custoVerticeCluster(grafo, cluster, v)
+    return total
+
+
+def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int], capacidade: int) -> list[set[int]]:
+    vertices = [v for v in range(grafo.num_vertices) if v in nos_relevantes]
+
+    # Estima o valor de k a partir da capacidade e dos niveis
+    niveis = [grafo.vertices[v].nivel for v in vertices]
+    nivel_total = sum(niveis)
+
+    k = ceil(nivel_total/capacidade)
+
+    medoids = random.sample(vertices, k)
+
+    continuar = True
+    custo_novo = np.inf
+    while continuar:
+        custo_anterior = custo_novo
+        continuar = False
+        clusters = list([set([m]) for m in medoids])
+        for v in vertices:
+            cluster = medoids.index(min(medoids, key=lambda x: grafo.distancia_id(v,x)))
+            clusters[cluster] |= set([v])
+            pass
+
+        for i in range(len(clusters)):
+            cluster = clusters[i]
+            medoids[i] = min(cluster, key=lambda x:custoVerticeCluster(grafo, cluster, x))
+        custo_novo = sum([custoCluster(grafo, cluster) for cluster in clusters])
+        if custo_novo < custo_anterior:
+            continuar = True
+
+    return clusters
+
+
+def nearestNeighbour(grafo: object, nos_relevantes: set[int],
                      capacidade: int):
     rota = []
     parada = False
@@ -14,7 +62,7 @@ def nearestNeighbour(grafo: object, nos_relevantes: list,
         mais_proximo = None
         menor_distancia = np.inf
         for i in range(len(distancias)):
-            if not nos_relevantes[i]:
+            if i not in nos_relevantes:
                 continue
             if grafo.vertices[i] not in rota \
                     and distancias[i] < menor_distancia:
@@ -31,14 +79,23 @@ def nearestNeighbour(grafo: object, nos_relevantes: list,
     return rota
 
 
-def savingsAlgorithm(grafo: object, nos_relevantes: list,
+def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
+                     capacidade: int):
+    clusters = kMedoidsClustering(grafo, nos_relevantes, capacidade)
+    rotas = []
+    for cluster in clusters:
+        rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster, capacidade))
+    
+    return rotas
+
+def savingsAlgorithm(grafo: object, nos_relevantes: set[int],
                      capacidade_veiculo: int):
     rotas = []
     distancia = grafo.matriz_adjacencia
 
     # faz as rotas iniciais
     for i in range(1, grafo.num_vertices):
-        if not nos_relevantes[i]:
+        if i not in nos_relevantes:
             continue
         # implicito que inicia em 0 e finaliza em 0
         rotas.append([i])

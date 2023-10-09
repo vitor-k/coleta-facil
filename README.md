@@ -7,5 +7,5 @@ A versão de Python 3 utilizada no desenvolvimento foi 3.10.8.
 
 ## Algoritmos Implementados
 - [x] Savings de Clarke e Wright
-- [ ] Fisher e Jaikumar
+- [x] Cluster first, route second
 - [ ] ...
