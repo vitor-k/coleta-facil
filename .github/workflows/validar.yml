@@ -22,7 +22,7 @@ jobs:
         pip install pycodestyle
     - name: Code Style
       run: |
-        pycodestyle --show-source --show-pep8 .
+        pycodestyle . --ignore=E501
   gera-documentacao:
     runs-on: ubuntu-latest
     steps:

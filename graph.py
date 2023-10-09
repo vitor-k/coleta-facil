@@ -47,18 +47,18 @@ class Graph:
             print(dados)
             capacidades = dados["capacidades"]
             self.num_vertices = len(capacidades)
-            self.vertices = list([Vertex(id=i,capacidade=c)
-                                    for i,c in enumerate(capacidades)])
+            self.vertices = list([Vertex(id=i, capacidade=c)
+                                  for i, c in enumerate(capacidades)])
             if self.vertices[0].id != 0:
                 self.vertices[0].id = 0
             self.matriz_adjacencia = np.array(dados["pesos"])
             print(self.matriz_adjacencia)
 
-    def distancia(self, v1:Vertex, v2:Vertex) -> float:
-        return self.matriz_adjacencia[v1.id,v2.id]
+    def distancia(self, v1: Vertex, v2: Vertex) -> float:
+        return self.matriz_adjacencia[v1.id, v2.id]
 
-    def distancia_id(self, id1:int, id2:int) -> float:
-        return self.matriz_adjacencia[id1,id2]
+    def distancia_id(self, id1: int, id2: int) -> float:
+        return self.matriz_adjacencia[id1, id2]
 
     def populaMatriz(self, distancias: dict):
         pass

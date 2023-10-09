@@ -7,8 +7,8 @@ import numpy as np
 
 def custoVerticeCluster(grafo: Graph, cluster: set[int], v: int):
     total = 0
-    for e in cluster-set([v]):
-        total += grafo.distancia_id(v,e)
+    for e in cluster - set([v]):
+        total += grafo.distancia_id(v, e)
     return total
 
 
@@ -19,14 +19,15 @@ def custoCluster(grafo: Graph, cluster: set[int]):
     return total
 
 
-def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int], capacidade: int) -> list[set[int]]:
+def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int],
+                       capacidade: int) -> list[set[int]]:
     vertices = [v for v in range(grafo.num_vertices) if v in nos_relevantes]
 
     # Estima o valor de k a partir da capacidade e dos niveis
     niveis = [grafo.vertices[v].nivel for v in vertices]
     nivel_total = sum(niveis)
 
-    k = ceil(nivel_total/capacidade)
+    k = ceil(nivel_total / capacidade)
 
     medoids = random.sample(vertices, k)
 
@@ -37,14 +38,16 @@ def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int], capacidade: int) 
         continuar = False
         clusters = list([set([m]) for m in medoids])
         for v in vertices:
-            cluster = medoids.index(min(medoids, key=lambda x: grafo.distancia_id(v,x)))
+            cluster = medoids.index(
+                min(medoids, key=lambda x: grafo.distancia_id(v, x)))
             clusters[cluster] |= set([v])
             pass
 
         for i in range(len(clusters)):
             cluster = clusters[i]
-            medoids[i] = min(cluster, key=lambda x:custoVerticeCluster(grafo, cluster, x))
-        custo_novo = sum([custoCluster(grafo, cluster) for cluster in clusters])
+            medoids[i] = min(cluster, key=lambda x: custoVerticeCluster(grafo, cluster, x))
+        custo_novo = sum([custoCluster(grafo, cluster)
+                          for cluster in clusters])
         if custo_novo < custo_anterior:
             continuar = True
 
@@ -80,13 +83,14 @@ def nearestNeighbour(grafo: object, nos_relevantes: set[int],
 
 
 def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
-                     capacidade: int):
+                            capacidade: int):
     clusters = kMedoidsClustering(grafo, nos_relevantes, capacidade)
     rotas = []
     for cluster in clusters:
         rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster, capacidade))
-    
+
     return rotas
+
 
 def savingsAlgorithm(grafo: object, nos_relevantes: set[int],
                      capacidade_veiculo: int):

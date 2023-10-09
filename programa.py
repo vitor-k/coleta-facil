@@ -10,21 +10,22 @@ def main(filepath):
         v.nivel = round(max(0.7, random.random()) * v.capacidade)
     print(grafo.vertices)
     nos_relevantes = set([v.id for v in grafo.vertices
-                          if (v.id != 0) and 
-                          (v.nivel / v.capacidade > 0.6)])
+                          if (v.id != 0) and (v.nivel / v.capacidade > 0.6)])
 
-    print("Nos relevantes: ", list([grafo.vertices[i] for i in nos_relevantes]))
-    
-    print("k-medoids:", roteamento.kMedoidsClustering(grafo, nos_relevantes, 100))
+    print("Nos relevantes: ", list([grafo.vertices[i]
+                                    for i in nos_relevantes]))
+
+    print("k-medoids:",
+          roteamento.kMedoidsClustering(grafo, nos_relevantes, 100))
 
     print("Uma rota do nearest neighbour: ",
           roteamento.nearestNeighbour(grafo, nos_relevantes, 100))
 
-    print("As rotas pelo savings: ", roteamento.savingsAlgorithm(
-        grafo, nos_relevantes, 100))
-    
-    print("As rotas pelo cluster first, route second: ", roteamento.clusterFirstRouteSecond(
-        grafo, nos_relevantes, 100))
+    print("As rotas pelo savings: ",
+          roteamento.savingsAlgorithm(grafo, nos_relevantes, 100))
+
+    print("As rotas pelo cluster first, route second: ",
+          roteamento.clusterFirstRouteSecond(grafo, nos_relevantes, 100))
 
     return
 
