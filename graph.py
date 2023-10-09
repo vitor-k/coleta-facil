@@ -25,6 +25,9 @@ class Vertex:
     def __repr__(self) -> str:
         return f"{self.id}: {self.nivel} / {self.capacidade}"
 
+    def __hash__(self) -> int:
+        return hash(self.id)
+
     def __str__(self) -> str:
         if self.id != 0:
             return f"Lixeira {self.id}: Nível={self.nivel}, \
@@ -38,42 +41,24 @@ class Graph:
     O grafo com as distâncias mínimas entre as lixeiras.
     """
 
-    def __init__(self, num_vertices: int = 0, filename: str = None) -> None:
-        if filename is not None:
-            with open(filename, "r") as fp:
-                dados = yaml.load(fp, yaml.Loader)
-                print(dados)
-                capacidades = dados["capacidades"]
-                self.num_vertices = len(capacidades)
-                self.vertices = list([Vertex(capacidade=c)
-                                     for c in capacidades])
-                if self.vertices[0].id != 0:
-                    self.vertices[0].id = 0
-                self.matriz_adjacencia = np.array(dados["pesos"])
-                print(self.matriz_adjacencia)
-            return
-            pass
+    def __init__(self, filename: str) -> None:
+        with open(filename, "r") as fp:
+            dados = yaml.load(fp, yaml.Loader)
+            print(dados)
+            capacidades = dados["capacidades"]
+            self.num_vertices = len(capacidades)
+            self.vertices = list([Vertex(id=i,capacidade=c)
+                                    for i,c in enumerate(capacidades)])
+            if self.vertices[0].id != 0:
+                self.vertices[0].id = 0
+            self.matriz_adjacencia = np.array(dados["pesos"])
+            print(self.matriz_adjacencia)
 
-        self.vertices = num_vertices * [None]
-        self.i_preenchido = 0
+    def distancia(self, v1:Vertex, v2:Vertex) -> float:
+        return self.matriz_adjacencia[v1.id,v2.id]
 
-        self.matriz_adjacencia = np.ndarray((num_vertices, num_vertices))
-
-        pass
-
-    def insereVertice(self, vertice: Vertex) -> None:
-        """Insere o vertice se houver espaço.
-
-        Args:
-            vertice: o vertice a ser inserido.
-
-        Returns:
-            None
-        """
-        if self.vertices[self.i_preenchido] is None:
-            self.vertices[self.i_preenchido] = vertice
-            self.i_preenchido += 1
-        pass
+    def distancia_id(self, id1:int, id2:int) -> float:
+        return self.matriz_adjacencia[id1,id2]
 
     def populaMatriz(self, distancias: dict):
         pass
