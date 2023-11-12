@@ -3,6 +3,7 @@ import random
 from math import ceil
 from graph import *
 import numpy as np
+import itertools
 
 
 def custoVerticeCluster(grafo: Graph, cluster: set[int], v: int):
@@ -19,8 +20,20 @@ def custoCluster(grafo: Graph, cluster: set[int]):
     return total
 
 
+def custoRota(grafo: Graph, rota: list[Vertex]):
+    total = 0
+    total += grafo.distancia_id(0, rota[0].id)
+    for i in range(len(rota)-1):
+        total += grafo.distancia(rota[i], rota[i+1])
+    total += grafo.distancia_id(rota[-1].id, 0)
+    return total
+
+
 def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int],
                        capacidade: int) -> list[set[int]]:
+    """
+    Realiza a clusterização por k medoids por otimização alternada
+    """
     vertices = [v for v in range(grafo.num_vertices) if v in nos_relevantes]
 
     # Estima o valor de k a partir da capacidade e dos niveis
@@ -54,12 +67,13 @@ def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int],
     return clusters
 
 
-def nearestNeighbour(grafo: object, nos_relevantes: set[int],
-                     capacidade: int):
+def nearestNeighbour(grafo: object, nos_relevantes: set[int]):
+    """
+    Implementa um algoritmo greedy para resolver o Problema do Caixeiro Viajante.
+    """
     rota = []
     parada = False
     no_atual = 0
-    nivel_previsto = 0
     while not parada:
         distancias = grafo.matriz_adjacencia[no_atual, :]
         mais_proximo = None
@@ -73,21 +87,32 @@ def nearestNeighbour(grafo: object, nos_relevantes: set[int],
                 menor_distancia = distancias[i]
         if mais_proximo is None:
             parada = True
-        elif nivel_previsto + grafo.vertices[mais_proximo].nivel < capacidade:
-            rota.append(grafo.vertices[mais_proximo])
-            nivel_previsto += grafo.vertices[mais_proximo].nivel
-            no_atual = mais_proximo
         else:
-            parada = True
+            rota.append(grafo.vertices[mais_proximo])
+            no_atual = mais_proximo
     return rota
+
+
+def buscaPCV(grafo: object, nos_relevantes: set[int]):
+    """
+    Implementa um algoritmo de busca exaustiva para resolver o Problema do Caixeiro Viajante.
+    """
+    vertices = [v for v in grafo.vertices if v.id in nos_relevantes]
+    rotas = itertools.permutations(vertices)
+    return min(rotas, key= lambda x: custoRota(grafo, x))
 
 
 def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
                             capacidade: int):
+    """
+    Implementa uma heurística para o Problema de Roteamento de Veículos
+    baseado na formação de clusters em que se resolve o Problema do 
+    Caixeiro Viajante
+    """
     clusters = kMedoidsClustering(grafo, nos_relevantes, capacidade)
     rotas = []
     for cluster in clusters:
-        rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster, capacidade))
+        rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster))
 
     return rotas
 
