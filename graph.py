@@ -9,7 +9,7 @@ class Vertex:
     """
     _id = 0
 
-    def __init__(self, id: int = None, capacidade: float = 0) -> None:
+    def __init__(self, id: int = None, capacidade: float = np.inf) -> None:
         if id is not None:
             self.id = id
         else:
@@ -17,6 +17,12 @@ class Vertex:
             Vertex._id += 1
         self.capacidade = capacidade
         self.nivel = 0
+        if self.id == 0:
+            self.poisson_lambda = 0
+            self.dejeto_medio = 0
+        else:
+            self.poisson_lambda = 1
+            self.dejeto_medio = 0.3
         pass
 
     def __eq__(self, __o: object) -> bool:
@@ -30,10 +36,9 @@ class Vertex:
 
     def __str__(self) -> str:
         if self.id != 0:
-            return f"Lixeira {self.id}: Nível={self.nivel}, \
-                     Capacidade={self.capacidade}"
+            return f"{self.nivel}: {self.nivel/self.capacidade}"
         else:
-            return "Depósito"
+            return "n/a"
 
 
 class Graph:
@@ -44,7 +49,6 @@ class Graph:
     def __init__(self, filename: str) -> None:
         with open(filename, "r") as fp:
             dados = yaml.load(fp, yaml.Loader)
-            print(dados)
             capacidades = dados["capacidades"]
             self.num_vertices = len(capacidades)
             self.vertices = list([Vertex(id=i, capacidade=c)
@@ -52,13 +56,11 @@ class Graph:
             if self.vertices[0].id != 0:
                 self.vertices[0].id = 0
             self.matriz_adjacencia = np.array(dados["pesos"])
-            print(self.matriz_adjacencia)
 
     def distancia(self, v1: Vertex, v2: Vertex) -> float:
+        """Retorna a distancia entre os vertices a partir dos ids"""
         return self.matriz_adjacencia[v1.id, v2.id]
 
     def distancia_id(self, id1: int, id2: int) -> float:
+        """Retorna a distancia entre os vertices a partir dos ids"""
         return self.matriz_adjacencia[id1, id2]
-
-    def populaMatriz(self, distancias: dict):
-        pass
