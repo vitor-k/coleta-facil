@@ -2,13 +2,17 @@ import graph
 import roteamento
 import random
 import argparse
+import simulation
 
 
 def main(filepath):
     grafo = graph.Graph(filename=filepath)
-    for v in grafo.vertices:
-        v.nivel = round(max(0.7, random.random()) * v.capacidade)
+    #for v in grafo.vertices:
+    #    v.nivel = round(max(0.7, random.random()) * v.capacidade)
     print(grafo.vertices)
+
+    simulation.simula(grafo, 0.1, 6)
+
     nos_relevantes = set([v.id for v in grafo.vertices
                           if (v.id != 0) and (v.nivel / v.capacidade > 0.6)])
 
@@ -19,13 +23,17 @@ def main(filepath):
           roteamento.kMedoidsClustering(grafo, nos_relevantes, 100))
 
     print("Uma rota do nearest neighbour: ",
-          roteamento.nearestNeighbour(grafo, nos_relevantes, 100))
+          roteamento.nearestNeighbour(grafo, nos_relevantes))
 
     print("As rotas pelo savings: ",
           roteamento.savingsAlgorithm(grafo, nos_relevantes, 100))
 
     print("As rotas pelo cluster first, route second: ",
           roteamento.clusterFirstRouteSecond(grafo, nos_relevantes, 100))
+
+    #print(grafo.vertices)
+    #with simulation.Logging("log.txt") as Log:
+    #    Log.log_current(grafo)
 
     return
 

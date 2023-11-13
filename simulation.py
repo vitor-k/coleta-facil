@@ -26,7 +26,11 @@ def atualizaNiveis(grafo, delta_t):
     for v in grafo.vertices:
         v.nivel += v.dejeto_medio * np.random.poisson(v.poisson_lambda * delta_t)
 
-def simula(grafo, delta_t, duracao):
+def simula(grafo: Graph, delta_t, duracao):
+    """
+    delta_t: horas
+    duracao: horas
+    """
 
     with Logging("log.txt") as log:
         for i in np.arange(0, duracao, delta_t):
