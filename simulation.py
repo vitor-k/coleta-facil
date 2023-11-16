@@ -32,7 +32,7 @@ def simula(grafo: Graph, delta_t, duracao):
     duracao: horas
     """
 
-    with Logging("log.txt") as log:
+    with Logging("log.csv") as log:
         for i in np.arange(0, duracao, delta_t):
             atualizaNiveis(grafo, delta_t)
             log.log_current(grafo)

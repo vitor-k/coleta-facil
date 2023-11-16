@@ -9,9 +9,10 @@ def main(filepath):
     grafo = graph.Graph(filename=filepath)
     #for v in grafo.vertices:
     #    v.nivel = round(max(0.7, random.random()) * v.capacidade)
-    print(grafo.vertices)
 
-    simulation.simula(grafo, 0.1, 6)
+    simulation.simula(grafo, 0.1, 8)
+
+    print(grafo.vertices)
 
     nos_relevantes = set([v.id for v in grafo.vertices
                           if (v.id != 0) and (v.nivel / v.capacidade > 0.6)])

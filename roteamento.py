@@ -75,16 +75,15 @@ def nearestNeighbour(grafo: object, nos_relevantes: set[int]):
     parada = False
     no_atual = 0
     while not parada:
-        distancias = grafo.matriz_adjacencia[no_atual, :]
         mais_proximo = None
         menor_distancia = np.inf
-        for i in range(len(distancias)):
+        for i in range(grafo.num_vertices):
             if i not in nos_relevantes:
                 continue
             if grafo.vertices[i] not in rota \
-                    and distancias[i] < menor_distancia:
+                    and grafo.distancia_id(no_atual, i) < menor_distancia:
                 mais_proximo = i
-                menor_distancia = distancias[i]
+                menor_distancia = grafo.distancia_id(no_atual, i)
         if mais_proximo is None:
             parada = True
         else:
@@ -99,7 +98,7 @@ def buscaPCV(grafo: object, nos_relevantes: set[int]):
     """
     vertices = [v for v in grafo.vertices if v.id in nos_relevantes]
     rotas = itertools.permutations(vertices)
-    return min(rotas, key= lambda x: custoRota(grafo, x))
+    return list(min(rotas, key= lambda x: custoRota(grafo, x)))
 
 
 def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
@@ -112,7 +111,11 @@ def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
     clusters = kMedoidsClustering(grafo, nos_relevantes, capacidade)
     rotas = []
     for cluster in clusters:
-        rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster))
+        if len(cluster) < 10:
+            rotas.append(buscaPCV(grafo, nos_relevantes & cluster))
+        else:
+            rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster))
+
 
     return rotas
 
@@ -120,7 +123,6 @@ def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
 def savingsAlgorithm(grafo: object, nos_relevantes: set[int],
                      capacidade_veiculo: int):
     rotas = []
-    distancia = grafo.matriz_adjacencia
 
     # faz as rotas iniciais
     for i in range(1, grafo.num_vertices):
@@ -145,9 +147,9 @@ def savingsAlgorithm(grafo: object, nos_relevantes: set[int],
 
                 primeira_rota_fim = rotas[i][-1]
                 segunda_rota_inicio = rotas[j][0]
-                savings[(i, j)] = distancia[0, primeira_rota_fim] \
-                    + distancia[segunda_rota_inicio, 0] \
-                    - distancia[primeira_rota_fim, segunda_rota_inicio]
+                savings[(i, j)] = grafo.distancia_id(0, primeira_rota_fim) \
+                    + grafo.distancia_id(segunda_rota_inicio, 0) \
+                    - grafo.distancia_id(primeira_rota_fim, segunda_rota_inicio)
 
         if not savings:
             break

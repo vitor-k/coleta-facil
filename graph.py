@@ -55,12 +55,34 @@ class Graph:
                                   for i, c in enumerate(capacidades)])
             if self.vertices[0].id != 0:
                 self.vertices[0].id = 0
-            self.matriz_adjacencia = np.array(dados["pesos"])
+
+            if "pesos" in dados:
+                self.matriz_adjacencia = np.array(dados["pesos"])
+            else:
+                self.matriz_adjacencia = None
+
+            if "coordenadas" in dados:
+                self.coordenadas = dados["coordenadas"]
+            else:
+                self.coordenadas = None
+
+            if "parametros_preenchimento" in dados:
+                for i in range(self.num_vertices):
+                    p_lambda, dejeto = dados["parametros_preenchimento"][i]
+                    self.vertices[i].poisson_lambda = p_lambda
+                    self.vertices[i].dejeto_medio = dejeto
+                    pass
 
     def distancia(self, v1: Vertex, v2: Vertex) -> float:
         """Retorna a distancia entre os vertices a partir dos ids"""
-        return self.matriz_adjacencia[v1.id, v2.id]
+        if self.matriz_adjacencia is not None:
+            return self.matriz_adjacencia[v1.id, v2.id]
+        if self.coordenadas is not None:
+            return np.hypot(self.coordenadas[v1.id][0] - self.coordenadas[v2.id][0], self.coordenadas[v1.id][1] - self.coordenadas[v2.id][1])
 
     def distancia_id(self, id1: int, id2: int) -> float:
         """Retorna a distancia entre os vertices a partir dos ids"""
-        return self.matriz_adjacencia[id1, id2]
+        if self.matriz_adjacencia is not None:
+            return self.matriz_adjacencia[id1, id2]
+        if self.coordenadas is not None:
+            return np.hypot(self.coordenadas[id1][0] - self.coordenadas[id2][0], self.coordenadas[id1][1] - self.coordenadas[id2][1])
