@@ -18,9 +18,11 @@ class Vertex:
         self.capacidade = capacidade
         self.nivel = 0
         if self.id == 0:
+            # O nó marcado como depósito não possui geração de lixo
             self.poisson_lambda = 0
             self.dejeto_medio = 0
         else:
+            # Valores default que não devem ser utilizados
             self.poisson_lambda = 1
             self.dejeto_medio = 0.3
         pass
@@ -74,7 +76,7 @@ class Graph:
                     pass
 
     def distancia(self, v1: Vertex, v2: Vertex) -> float:
-        """Retorna a distancia entre os vertices a partir dos ids"""
+        """Retorna a distancia entre os vertices"""
         if self.matriz_adjacencia is not None:
             return self.matriz_adjacencia[v1.id, v2.id]
         if self.coordenadas is not None:
