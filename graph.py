@@ -48,32 +48,35 @@ class Graph:
     O grafo com as distâncias mínimas entre as lixeiras.
     """
 
-    def __init__(self, filename: str) -> None:
-        with open(filename, "r") as fp:
-            dados = yaml.load(fp, yaml.Loader)
-            capacidades = dados["capacidades"]
-            self.num_vertices = len(capacidades)
-            self.vertices = list([Vertex(id=i, capacidade=c)
-                                  for i, c in enumerate(capacidades)])
-            if self.vertices[0].id != 0:
-                self.vertices[0].id = 0
+    def __init__(self, filename: str = None, dados = None) -> None:
+        if filename is not None:
+            with open(filename, "r") as fp:
+                dados = yaml.load(fp, yaml.Loader)
+        elif dados is None:
+            return
+        capacidades = dados["capacidades"]
+        self.num_vertices = len(capacidades)
+        self.vertices = list([Vertex(id=i, capacidade=c)
+                                for i, c in enumerate(capacidades)])
+        if self.vertices[0].id != 0:
+            self.vertices[0].id = 0
 
-            if "pesos" in dados:
-                self.matriz_adjacencia = np.array(dados["pesos"])
-            else:
-                self.matriz_adjacencia = None
+        if "pesos" in dados:
+            self.matriz_adjacencia = np.array(dados["pesos"])
+        else:
+            self.matriz_adjacencia = None
 
-            if "coordenadas" in dados:
-                self.coordenadas = dados["coordenadas"]
-            else:
-                self.coordenadas = None
+        if "coordenadas" in dados:
+            self.coordenadas = dados["coordenadas"]
+        else:
+            self.coordenadas = None
 
-            if "parametros_preenchimento" in dados:
-                for i in range(self.num_vertices):
-                    p_lambda, dejeto = dados["parametros_preenchimento"][i]
-                    self.vertices[i].poisson_lambda = p_lambda
-                    self.vertices[i].dejeto_medio = dejeto
-                    pass
+        if "parametros_preenchimento" in dados:
+            for i in range(self.num_vertices):
+                p_lambda, dejeto = dados["parametros_preenchimento"][i]
+                self.vertices[i].poisson_lambda = p_lambda
+                self.vertices[i].dejeto_medio = dejeto
+                pass
 
     def distancia(self, v1: Vertex, v2: Vertex) -> float:
         """Retorna a distancia entre os vertices"""

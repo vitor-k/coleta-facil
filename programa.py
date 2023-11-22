@@ -33,8 +33,6 @@ def main(filepath):
           roteamento.clusterFirstRouteSecond(grafo, nos_relevantes, 100))
 
     #print(grafo.vertices)
-    #with simulation.Logging("log.txt") as Log:
-    #    Log.log_current(grafo)
 
     return
 

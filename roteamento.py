@@ -6,21 +6,24 @@ import numpy as np
 import itertools
 
 
-def custoVerticeCluster(grafo: Graph, cluster: set[int], v: int):
+def custoVerticeCluster(grafo: Graph, cluster: set[int], v: int) -> float:
     total = 0
     for e in cluster - set([v]):
         total += grafo.distancia_id(v, e)
     return total
 
 
-def custoCluster(grafo: Graph, cluster: set[int]):
+def custoCluster(grafo: Graph, cluster: set[int]) -> float:
     total = 0
     for v in cluster:
         total += custoVerticeCluster(grafo, cluster, v)
     return total
 
 
-def custoRota(grafo: Graph, rota: list[Vertex]):
+def custoRota(grafo: Graph, rota: list[Vertex]) -> float:
+    """
+    Calcula o custo total de uma rota
+    """
     total = 0
     total += grafo.distancia_id(0, rota[0].id)
     for i in range(len(rota)-1):
@@ -42,27 +45,36 @@ def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int],
 
     k = ceil(nivel_total / capacidade)
 
-    medoids = random.sample(vertices, k)
+    clusters_excessivos = True
+    while clusters_excessivos:
+        clusters_excessivos = False
+        medoids = random.sample(vertices, k)
 
-    continuar = True
-    custo_novo = np.inf
-    while continuar:
-        custo_anterior = custo_novo
-        continuar = False
-        clusters = list([set([m]) for m in medoids])
-        for v in vertices:
-            cluster = medoids.index(
-                min(medoids, key=lambda x: grafo.distancia_id(v, x)))
-            clusters[cluster] |= set([v])
-            pass
+        continuar = True
+        custo_novo = np.inf
+        while continuar:
+            custo_anterior = custo_novo
+            continuar = False
+            clusters = list([set([m]) for m in medoids])
+            for v in vertices:
+                cluster = medoids.index(
+                    min(medoids, key=lambda x: grafo.distancia_id(v, x)))
+                clusters[cluster] |= set([v])
+                pass
 
-        for i in range(len(clusters)):
-            cluster = clusters[i]
-            medoids[i] = min(cluster, key=lambda x: custoVerticeCluster(grafo, cluster, x))
-        custo_novo = sum([custoCluster(grafo, cluster)
-                          for cluster in clusters])
-        if custo_novo < custo_anterior:
-            continuar = True
+            for i in range(len(clusters)):
+                cluster = clusters[i]
+                medoids[i] = min(cluster, key=lambda x: custoVerticeCluster(grafo, cluster, x))
+            custo_novo = sum([custoCluster(grafo, cluster)
+                            for cluster in clusters])
+            if custo_novo < custo_anterior:
+                continuar = True
+        for cluster in clusters:
+            total = sum([grafo.vertices[x].nivel for x in cluster])
+            if total > capacidade:
+                clusters_excessivos = True
+        if clusters_excessivos:
+            k += 1
 
     return clusters
 
@@ -102,7 +114,7 @@ def buscaPCV(grafo: object, nos_relevantes: set[int]):
 
 
 def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
-                            capacidade: int):
+                            capacidade: int) -> list[Vertex]:
     """
     Implementa uma heurística para o Problema de Roteamento de Veículos
     baseado na formação de clusters em que se resolve o Problema do 
@@ -121,7 +133,11 @@ def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
 
 
 def savingsAlgorithm(grafo: object, nos_relevantes: set[int],
-                     capacidade_veiculo: int):
+                     capacidade_veiculo: int) -> list[Vertex]:
+    """
+    Implementa a heurística para o Problema de Roteamento de Veículos
+    conhecida como algoritmo de savings ou algoritmo de Clarke e Wright.
+    """
     rotas = []
 
     # faz as rotas iniciais
