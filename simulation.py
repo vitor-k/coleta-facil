@@ -26,7 +26,7 @@ class Trabalhador:
     def __init__(self, grafo, rota) -> None:
         self.grafo = grafo
         self.rota = rota
-        self.velocidade = 250000 # 5km/h * 50 px/m
+        self.velocidade = 3.6 * 50000 # 1m/s * 50 px/m
         self.progresso = 0
         self.indice_rota = 0
         self.custos = [grafo.distancia_id(0, rota[0].id)] + [grafo.distancia(rota[i], rota[i+1]) for i in range(len(rota)-1)] + [grafo.distancia_id(rota[-1].id, 0)]
