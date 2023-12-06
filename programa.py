@@ -7,8 +7,6 @@ import simulation
 
 def main(filepath):
     grafo = graph.Graph(filename=filepath)
-    #for v in grafo.vertices:
-    #    v.nivel = round(max(0.7, random.random()) * v.capacidade)
 
     simulation.simula(grafo, 0.1, 8)
 
@@ -31,8 +29,6 @@ def main(filepath):
 
     print("As rotas pelo cluster first, route second: ",
           roteamento.clusterFirstRouteSecond(grafo, nos_relevantes, 100))
-
-    #print(grafo.vertices)
 
     return
 

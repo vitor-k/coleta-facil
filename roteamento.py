@@ -26,8 +26,8 @@ def custoRota(grafo: Graph, rota: list[Vertex]) -> float:
     """
     total = 0
     total += grafo.distancia_id(0, rota[0].id)
-    for i in range(len(rota)-1):
-        total += grafo.distancia(rota[i], rota[i+1])
+    for i in range(len(rota) - 1):
+        total += grafo.distancia(rota[i], rota[i + 1])
     total += grafo.distancia_id(rota[-1].id, 0)
     return total
 
@@ -114,10 +114,10 @@ def buscaPCV(grafo: object, nos_relevantes: set[int]):
 
 
 def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
-                            capacidade: int, forca_bruta = None) -> list[Vertex]:
+                            capacidade: int, forca_bruta: bool = None) -> list[Vertex]:
     """
     Implementa uma heurística para o Problema de Roteamento de Veículos
-    baseado na formação de clusters em que se resolve o Problema do 
+    baseado na formação de clusters em que se resolve o Problema do
     Caixeiro Viajante
     """
     clusters = kMedoidsClustering(grafo, nos_relevantes, capacidade)
@@ -127,7 +127,6 @@ def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
             rotas.append(buscaPCV(grafo, nos_relevantes & cluster))
         else:
             rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster))
-
 
     return rotas
 

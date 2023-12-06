@@ -57,7 +57,7 @@ class Graph:
         capacidades = dados["capacidades"]
         self.num_vertices = len(capacidades)
         self.vertices = list([Vertex(id=i, capacidade=c)
-                                for i, c in enumerate(capacidades)])
+                              for i, c in enumerate(capacidades)])
         if self.vertices[0].id != 0:
             self.vertices[0].id = 0
 
