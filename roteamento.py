@@ -43,7 +43,7 @@ def kMedoidsClustering(grafo: Graph, nos_relevantes: set[int],
     niveis = [grafo.vertices[v].nivel for v in vertices]
     nivel_total = sum(niveis)
 
-    k = ceil(nivel_total / capacidade)
+    k = ceil(nivel_total / capacidade) or 1
 
     clusters_excessivos = True
     while clusters_excessivos:
@@ -114,7 +114,7 @@ def buscaPCV(grafo: object, nos_relevantes: set[int]):
 
 
 def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
-                            capacidade: int) -> list[Vertex]:
+                            capacidade: int, forca_bruta = None) -> list[Vertex]:
     """
     Implementa uma heurística para o Problema de Roteamento de Veículos
     baseado na formação de clusters em que se resolve o Problema do 
@@ -123,7 +123,7 @@ def clusterFirstRouteSecond(grafo: object, nos_relevantes: set[int],
     clusters = kMedoidsClustering(grafo, nos_relevantes, capacidade)
     rotas = []
     for cluster in clusters:
-        if len(cluster) < 10:
+        if forca_bruta is True or (forca_bruta is None and len(cluster) < 10):
             rotas.append(buscaPCV(grafo, nos_relevantes & cluster))
         else:
             rotas.append(nearestNeighbour(grafo, nos_relevantes & cluster))
