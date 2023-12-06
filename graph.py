@@ -78,16 +78,22 @@ class Graph:
                 self.vertices[i].dejeto_medio = dejeto
                 pass
 
-    def distancia(self, v1: Vertex, v2: Vertex) -> float:
-        """Retorna a distancia entre os vertices"""
-        if self.matriz_adjacencia is not None:
-            return self.matriz_adjacencia[v1.id, v2.id]
-        if self.coordenadas is not None:
-            return np.hypot(self.coordenadas[v1.id][0] - self.coordenadas[v2.id][0], self.coordenadas[v1.id][1] - self.coordenadas[v2.id][1])
-
     def distancia_id(self, id1: int, id2: int) -> float:
         """Retorna a distancia entre os vertices a partir dos ids"""
         if self.matriz_adjacencia is not None:
             return self.matriz_adjacencia[id1, id2]
         if self.coordenadas is not None:
-            return np.hypot(self.coordenadas[id1][0] - self.coordenadas[id2][0], self.coordenadas[id1][1] - self.coordenadas[id2][1])
+            delta_x = self.coordenadas[id1][0] - self.coordenadas[id2][0]
+            delta_y = self.coordenadas[id1][1] - self.coordenadas[id2][1]
+
+            # Norma-2 (Distancia euclidiana)
+            return np.hypot(delta_x, delta_y)
+
+    def distancia(self, v1: Vertex, v2: Vertex) -> float:
+        """Retorna a distancia entre os vertices"""
+        return self.distancia_id(v1.id, v2.id)
+
+    def atualizaNiveis(self, delta_t):
+        for v in self.vertices:
+            v.nivel += v.dejeto_medio * np.random.poisson(v.poisson_lambda * delta_t)
+            v.nivel = min(v.nivel, v.capacidade)
